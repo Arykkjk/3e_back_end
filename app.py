@@ -30,3 +30,10 @@ class CadastroAluno(QWidget):
         layout.addWidget(self.input_turma, 1, 0)
         layout.addWidget(self.input_turma, 1, 1)
 
+        label_email = QLabel('Email:')
+        self.input_email = QLineEdit()
+        layout.addWidget(label_email, 2, 0)
+        layout.addWidget(self.input_email, 2, 1)
+
+        botao_adicionar
+
