@@ -1,12 +1,13 @@
 import sys
 import pandas as pd
+import openpyxl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-class CadastroAluno(QWidget):
+class CadastroAlunos(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -22,12 +23,12 @@ class CadastroAluno(QWidget):
 
         label_nome = QLabel('Nome do aluno:')
         self.input_nome = QLineEdit()
-        layout.addWidget(self.input_nome, 0, 0)
+        layout.addWidget(label_nome, 0, 0)
         layout.addWidget(self.input_nome, 0, 1)
 
         label_turma = QLabel('Turma:')
         self.input_turma = QLineEdit()
-        layout.addWidget(self.input_turma, 1, 0)
+        layout.addWidget(label_turma, 1, 0)
         layout.addWidget(self.input_turma, 1, 1)
 
         label_email = QLabel('Email:')
@@ -40,59 +41,55 @@ class CadastroAluno(QWidget):
         layout.addWidget(botao_adicionar, 3, 0, 1, 2)
 
         botao_cadastrar = QPushButton('Cadastrar e enviar emails')
-        botao_cadastrar.clicked.connect(self.cadastar_e_enviar_emails)
-        layout.addWidget(botao_cadastrar,4, 0, 1, 2)
+        botao_cadastrar.clicked.connect(self.cadastrar_e_enviar_emails)
+        layout.addWidget(botao_cadastrar, 4, 0, 1, 2)
 
         self.remetente = "concursopilargames@gmail.com"
-        self.senha = "@PilarMsturana2"
+        self.senha = "@PilarMaturana2"
 
-        def adicionar_aluno(self):
-            nome = self.input_nome.text()
-            turma = self.input_turma.text()
-            email = self.input_email.text()
+    def adicionar_aluno(self):
+        nome = self.input_nome.text()
+        turma = self.input_turma.text()
+        email = self.input_email.text()
 
-            if nome and turma and email:
+        if nome and turma and email:
                 self.alunos.append({'Nome': nome, 'Turma': turma, 'Email': email})
                 self.input_nome.clear()
                 self.input_turma.clear()
                 self.input_email.clear()
-            else:
+        else:
                 QMessageBox.warning(self, 'Erro, Preencha todos os campo!')
 
-        def cadastrar_e_enviar_emails(self):
-            if self.alunos:
-                df = pd.DataFrame(self.alunos)
-                df.to_excel("cadastro_alunos.xlsx", index=False)
+    def cadastrar_e_enviar_emails(self):
+        if self.alunos:
+            df = pd.DataFrame(self.alunos)
+            df.to_excel("cadastro_aluno.xlsx", index=False)
 
-                for aluno in self.alunos:
-                   self.enviar_email(aluno['Email'])
+            for aluno in self.alunos:
+                self.enviar_email(aluno['Email'])
 
-                QMessageBox.infotmation(self, 'Sucesso', 'Cadastro completo e emais enviados!')
-            else:
-                QMessageBox.warning(self, 'Erro', 'Nenhum aluno cadastrado!')
+            QMessageBox.information(self, 'Sucesso', 'Cadastro completo e email enviados!')
+        else:
+            QMessageBox.warning(self, 'Erro', 'Nenhum aluno cadastrado!')
 
-            def enviar_email(self, destinatario):
-                msg = MIMEMultipart()
-                msg['From'] = self.remetente
-                msg['To'] = destinatario
-                msg['Subject'] = "Confitmação de Inscrição - Concurso de Jogos"
+    def enviar_email(self, destinatario):
+        msg = MIMEMultipart()
+        msg['From'] = self.remetente
+        msg['To'] = destinatario
+        msg['Subject'] = "Confirmação de Inscrição - Concurso de Jogos"
 
-                corpo = "Olá, sua inscrição no concurso de jogos foi confirmada!"
-                msg.attach(MIMEText(corpo, 'plain'))
+        corpo = "Olá, sua inscrição no concurso de jogos foi confirmada!"
+        msg.attach(MIMEText(corpo, 'plain'))
 
-                servidor = smtplib.SMTP('smtp.com', 587)
-                servidor.starttls()
-                servidor.login(self.remetente, self.senha)
-                texto = msg.as_string()
-                servidor.sendmail(self.remetente, destinatario. texto)
-                servidor.quit()
+        servidor = smtplib.SMTP('smtp.gmail.com', 587)
+        servidor.starttls()
+        servidor.login(self.remetente, self.senha)
+        texto = msg.as_string()
+        servidor.sendmail(self.remetente, destinatario, texto)
+        servidor.quit()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = CadastroAluno()
+    ex = CadastroAlunos()
     ex.show()
     sys.exit(app.exec_())
-
-
-                
-        
